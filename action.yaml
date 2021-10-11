@@ -1,0 +1,24 @@
+name: terraform init
+description: terraform init
+inputs:
+  github_token:
+    description: 'GitHub Access Token'
+    required: true
+  github_app_token:
+    description: 'GitHub Access Token'
+    required: true
+  working_directory:
+    description: working directory
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - run: bash ${{ github.action_path }}/main.sh
+      working-directory: ${{ inputs.working_directory }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_APP_TOKEN: ${{ inputs.github_app_token }}
+        ROOT_DIR: ${{ github.workspace }}
+        WORKING_DIR: ${{ inputs.working_directory }}
