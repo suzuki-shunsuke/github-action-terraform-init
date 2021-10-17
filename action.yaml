@@ -3,7 +3,8 @@ description: terraform init
 inputs:
   github_token:
     description: 'GitHub Access Token'
-    required: true
+    required: false
+    default: ${{ github.token }}
   github_app_token:
     description: 'GitHub Access Token'
     required: true
