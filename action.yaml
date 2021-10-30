@@ -23,3 +23,4 @@ runs:
         GITHUB_APP_TOKEN: ${{ inputs.github_app_token }}
         ROOT_DIR: ${{ github.workspace }}
         WORKING_DIR: ${{ inputs.working_directory }}
+        EVENT_NAME: ${{ github.event_name }}
