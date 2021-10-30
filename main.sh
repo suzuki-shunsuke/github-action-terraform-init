@@ -3,6 +3,11 @@
 set -eu
 set -o pipefail
 
+if [ "$EVENT_NAME" != "pull_request" ]; then
+  github-comment exec -- terraform init -input=false
+  exit 0
+fi
+
 terraform init -input=false || github-comment exec -- terraform init -input=false -upgrade
 
 github-comment exec -- terraform providers lock -platform=windows_amd64 -platform=linux_amd64 -platform=darwin_amd64
