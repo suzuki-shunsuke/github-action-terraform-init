@@ -19,7 +19,7 @@ github-comment exec -- terraform providers lock -platform=windows_amd64 -platfor
 
 if [ "$exist_lock_file" = "false" ] || ! git diff --quiet .terraform.lock.hcl; then
 	ghcp commit -r "$GITHUB_REPOSITORY" -b "$GITHUB_HEAD_REF" \
-		-m "chore(terraform-provider): update .terraform.lock.hcl" \
+		-m "chore: update .terraform.lock.hcl" \
 		-C "$ROOT_DIR" "$WORKING_DIR/.terraform.lock.hcl" \
 		--token "$GITHUB_APP_TOKEN"
 	exit 1
