@@ -15,7 +15,8 @@ fi
 
 terraform init -input=false || github-comment exec -- terraform init -input=false -upgrade
 
-github-comment exec -- terraform providers lock -platform=windows_amd64 -platform=linux_amd64 -platform=darwin_amd64
+# shellcheck disable=SC2086
+github-comment exec -- terraform providers lock $PROVIDERS_LOCK_OPTS
 
 if [ "$exist_lock_file" = "false" ] || ! git diff --quiet .terraform.lock.hcl; then
 	ghcp commit -r "$GITHUB_REPOSITORY" -b "$GITHUB_HEAD_REF" \

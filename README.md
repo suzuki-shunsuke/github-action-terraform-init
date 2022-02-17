@@ -39,6 +39,7 @@ name | default | description
 --- | --- | ---
 github_token | `github.token` | GitHub Access Token. This is used to notify the failure with github-comment
 working_directory | "" (current directory) | Working Directory path
+providers_lock_opts | `-platform=windows_amd64 -platform=linux_amd64 -platform=darwin_amd64` | [terraform providers lock](https://www.terraform.io/cli/commands/providers/lock) options
 
 ## Outputs
 
