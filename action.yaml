@@ -12,6 +12,10 @@ inputs:
     description: working directory
     required: false
     default: ""
+  providers_lock_opts:
+    description: terraform providers lock options
+    required: false
+    default: -platform=windows_amd64 -platform=linux_amd64 -platform=darwin_amd64
 runs:
   using: composite
   steps:
@@ -24,3 +28,4 @@ runs:
         ROOT_DIR: ${{ github.workspace }}
         WORKING_DIR: ${{ inputs.working_directory }}
         EVENT_NAME: ${{ github.event_name }}
+        PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
