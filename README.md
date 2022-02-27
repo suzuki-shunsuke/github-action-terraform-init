@@ -3,6 +3,12 @@
 GitHub Actions to run `terraform init` and `terraform providers lock`.
 If Terraform lock file `.terraform.lock.hcl` is created or updated in `pull_request` event workflow, this action pushes a commit to the remote branch `GITHUB_HEAD_REF`.
 
+<img width="894" alt="image" src="https://user-images.githubusercontent.com/13323303/155866735-85f964d8-7bb7-411c-9b20-5f7abcea3e1a.png">
+
+--
+
+<img width="1410" alt="image" src="https://user-images.githubusercontent.com/13323303/155866753-32012a3b-02fe-4f58-935e-178283ae2c77.png">
+
 ## Requirements
 
 * terraform
