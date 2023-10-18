@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-set -eu
-set -o pipefail
+set -euo pipefail
 
-if [ "$EVENT_NAME" != "pull_request" ]; then
+if [ "$SKIP_PUSH" = "true" ]; then
   github-comment exec -- terraform init -input=false
   exit 0
 fi
