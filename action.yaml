@@ -19,6 +19,9 @@ inputs:
   skip_push:
     description: If "true", a commit isn't pushed to the remote branch
     required: false
+  use_opentofu:
+    description: If "true", OpenTofu is run instead of Terraform
+    required: false
 runs:
   using: composite
   steps:
@@ -33,3 +36,4 @@ runs:
         EVENT_NAME: ${{ github.event_name }}
         PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
         SKIP_PUSH: ${{ inputs.skip_push }}
+        USE_OPENTOFU: ${{ inputs.use_opentofu }}
