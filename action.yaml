@@ -19,6 +19,9 @@ inputs:
   skip_push:
     description: If "true", a commit isn't pushed to the remote branch
     required: false
+  terraform_command:
+    description: You can execute a tool such as OpenTofu instead of Terraform
+    default: terraform
 runs:
   using: composite
   steps:
@@ -33,3 +36,4 @@ runs:
         EVENT_NAME: ${{ github.event_name }}
         PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
         SKIP_PUSH: ${{ inputs.skip_push }}
+        TF_COMMAND: ${{ inputs.terraform_command }}

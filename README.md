@@ -18,18 +18,19 @@ If Terraform lock file `.terraform.lock.hcl` is created or updated, this action 
 ## Example
 
 ```yaml
-- uses: suzuki-shunsuke/github-action-terraform-init@v0.1.2
+- uses: suzuki-shunsuke/github-action-terraform-init@main
   with:
     github_app_token: ${{ secrets.GITHUB_APP_TOKEN }}
 ```
 
 ```yaml
-- uses: suzuki-shunsuke/github-action-terraform-init@v0.1.2
+- uses: suzuki-shunsuke/github-action-terraform-init@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     github_app_token: ${{ secrets.GITHUB_APP_TOKEN }}
     working_directory: foo
     skip_push: "true"
+    terraform_command: tofu
 ```
 
 ## Inputs
@@ -48,6 +49,7 @@ github_token | `github.token` | GitHub Access Token. This is used to notify the 
 working_directory | "" (current directory) | Working Directory path
 providers_lock_opts | `-platform=windows_amd64 -platform=linux_amd64 -platform=darwin_amd64` | [terraform providers lock](https://www.terraform.io/cli/commands/providers/lock) options
 skip_push | "" | If "true", a commit isn't pushed to the remote branch
+terraform_command | terraform | You can execute a tool such as OpenTofu instead of Terraform
 
 ## Outputs
 
