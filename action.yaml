@@ -7,7 +7,7 @@ inputs:
     default: ${{ github.token }}
   github_app_token:
     description: "GitHub Access Token"
-    required: true
+    required: false
   working_directory:
     description: working directory
     required: false
@@ -22,18 +22,74 @@ inputs:
   terraform_command:
     description: You can execute a tool such as OpenTofu instead of Terraform
     default: terraform
+  securefix_action_server_repository:
+    required: false
+    default: ''
+    description: |
+      The GitHub repository for the Securefix Action server.
+      https://github.com/csm-actions/securefix-action
+      If this is set, this action uses Securefix Action to update aqua-checksums.json.
+  securefix_action_app_id:
+    required: false
+    default: ''
+    description: |
+      The GitHub App ID for the Securefix Action client.
+  securefix_action_app_private_key:
+    required: false
+    default: ''
+    description: |
+      The GitHub App private key for the Securefix Action client.
 runs:
   using: composite
   steps:
-    - run: bash "$GITHUB_ACTION_PATH/main.sh"
-      working-directory: ${{ inputs.working_directory }}
+    - if: inputs.skip_push == 'true'
       shell: bash
+      working-directory: ${{ inputs.working_directory }}
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
-        GITHUB_APP_TOKEN: ${{ inputs.github_app_token }}
-        ROOT_DIR: ${{ github.workspace }}
-        WORKING_DIR: ${{ inputs.working_directory }}
-        EVENT_NAME: ${{ github.event_name }}
-        PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
-        SKIP_PUSH: ${{ inputs.skip_push }}
         TF_COMMAND: ${{ inputs.terraform_command }}
+      run: |
+        github-comment exec -- "$TF_COMMAND" init -input=false
+
+    - if: inputs.skip_push != 'true'
+      id: init
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        TF_COMMAND: ${{ inputs.terraform_command }}
+        PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
+        WORKING_DIR: ${{ inputs.working_directory }}
+      run: |
+        exist_lock_file=false
+        if [ -f .terraform.lock.hcl ]; then
+          exist_lock_file=true
+        fi
+
+        "$TF_COMMAND" init -input=false || github-comment exec -- "$TF_COMMAND" init -input=false -upgrade
+        # shellcheck disable=SC2086
+        github-comment exec -- "$TF_COMMAND" providers lock $PROVIDERS_LOCK_OPTS
+        if [ "$exist_lock_file" = "false" ] || ! git diff --quiet .terraform.lock.hcl; then
+          if [ -n "$WORKING_DIR" ]; then
+            echo "changed_file=$WORKING_DIR/.terraform.lock.hcl" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "changed_file=.terraform.lock.hcl" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+    - if: inputs.securefix_action_server_repository == '' && steps.init.outputs.changed_file != ''
+      uses: suzuki-shunsuke/commit-action@e3299afe2e5ffb76f1987743e3dbc0f00ece72d8 # v0.0.8
+      with:
+        commit_message: "chore: update .terraform.lock.hcl"
+        github_token: ${{ inputs.github_app_token }}
+        files: ${{ steps.init.outputs.changed_file }}
+
+    - if: inputs.securefix_action_server_repository != '' && steps.init.outputs.changed_file != ''
+      uses: csm-actions/securefix-action@93104f33820be53834509335ed722a209d3714f3 # v0.1.1-0
+      with:
+        app_id: ${{inputs.securefix_action_app_id}}
+        app_private_key: ${{inputs.securefix_action_app_private_key}}
+        server_repository: ${{ inputs.securefix_action_server_repository }}
+        commit_message: "chore: update .terraform.lock.hcl"
+        files: ${{ steps.init.outputs.changed_file }}
