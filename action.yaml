@@ -61,14 +61,18 @@ runs:
         PROVIDERS_LOCK_OPTS: ${{ inputs.providers_lock_opts }}
         WORKING_DIR: ${{ inputs.working_directory }}
       run: |
+        echo "::group::$TF_COMMAND init"
         exist_lock_file=false
         if [ -f .terraform.lock.hcl ]; then
           exist_lock_file=true
         fi
 
         "$TF_COMMAND" init -input=false || github-comment exec -- "$TF_COMMAND" init -input=false -upgrade
+        echo "::endgroup::"
+        echo "::group::$TF_COMMAND providers lock"
         # shellcheck disable=SC2086
         github-comment exec -- "$TF_COMMAND" providers lock $PROVIDERS_LOCK_OPTS
+        echo "::endgroup::"
         if [ "$exist_lock_file" = "false" ] || ! git diff --quiet .terraform.lock.hcl; then
           if [ -n "$WORKING_DIR" ]; then
             echo "changed_file=$WORKING_DIR/.terraform.lock.hcl" >> "$GITHUB_OUTPUT"
