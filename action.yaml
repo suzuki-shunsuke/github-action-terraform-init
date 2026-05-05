@@ -83,7 +83,7 @@ runs:
         fi
 
     - if: inputs.securefix_action_server_repository == '' && steps.init.outputs.changed_file != ''
-      uses: suzuki-shunsuke/commit-action@44cc32c01e261a029c0161ff908a3a2895bfc46f # v0.1.2
+      uses: suzuki-shunsuke/commit-action@06e3b49d4706498d325d29bd85adc82ecf2f5d8f # v1.0.0
       with:
         commit_message: "chore: update .terraform.lock.hcl"
         github_token: ${{ inputs.github_app_token }}
