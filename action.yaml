@@ -90,7 +90,7 @@ runs:
         files: ${{ steps.init.outputs.changed_file }}
 
     - if: inputs.securefix_action_server_repository != '' && steps.init.outputs.changed_file != ''
-      uses: csm-actions/securefix-action@11b2bfd2f4b7e1e02b63648fbe5d17e6273e515d # v0.6.1
+      uses: csm-actions/securefix-action@e0c41ad42cb2c011143f37c073ce990dd404c0da # v0.6.2
       with:
         app_id: ${{inputs.securefix_action_app_id}}
         app_private_key: ${{inputs.securefix_action_app_private_key}}
